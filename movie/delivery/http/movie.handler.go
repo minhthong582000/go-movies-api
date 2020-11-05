@@ -114,13 +114,13 @@ func (m *MovieHandler) Update(c *gin.Context) {
 		return
 	}
 
-	err = m.MovUsecase.Update(id, &mov)
+	updatedRow, err := m.MovUsecase.Update(id, &mov)
 	if err != nil {
 		c.JSON(getStatusCode(err), ResponseError{Message: err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusCreated, mov)
+	c.JSON(http.StatusCreated, gin.H{"updated": updatedRow})
 }
 
 func (m *MovieHandler) Delete(c *gin.Context) {

@@ -57,10 +57,12 @@ func (m *gormMovieRepository) Delete(id int64) (err error) {
 	return nil
 }
 
-func (m *gormMovieRepository) Update(id int64, movie *domain.Movie) error {
-	if err := m.Conn.Model(domain.Movie{}).Where("id = ?", id).Updates(&movie).Error; err != nil {
-		return err
+func (m *gormMovieRepository) Update(id int64, movie *domain.Movie) (int64, error) {
+	result := m.Conn.Where("id = ?", id).Updates(&movie)
+
+	if err := result.Error; err != nil {
+		return 0, err
 	}
 
-	return nil
+	return result.RowsAffected, nil
 }

@@ -16,15 +16,14 @@ import (
 )
 
 func main() {
-	r := gin.New()
+	r := gin.Default()
 	middleware.SetupLogOutput()
-	r.Use(gin.Recovery(), gin.Logger())
 
 	db, err := gorm.Open(mysql.Open(config.DbURL(config.BuildDBConfig())), &gorm.Config{})
 	if err != nil {
 		fmt.Println("Status:", err)
 	}
-	db.AutoMigrate(&domain.Movie{}, &domain.Author{})
+	db.AutoMigrate(&domain.Movie{}, &domain.Director{}, &domain.Actor{}, &domain.Gendres{})
 
 	movieRepo := gormMovieRepo.NewGormMovieRepository(db)
 	movieUse := movieUsecase.NewMovieUsecase(movieRepo)

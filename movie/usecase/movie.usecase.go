@@ -1,6 +1,8 @@
 package usecase
 
 import (
+	"reflect"
+
 	"github.com/minhthong582000/go-movies-api/domain"
 )
 
@@ -32,13 +34,13 @@ func (m *movieUsecase) GetByID(id int64) (movie domain.Movie, err error) {
 	return movie, nil
 }
 
-func (m *movieUsecase) Update(id int64, movie *domain.Movie) (err error) {
-	err = m.movieRepo.Update(id, movie)
+func (m *movieUsecase) Update(id int64, movie *domain.Movie) (updatedRow int64, err error) {
+	updatedRow, err = m.movieRepo.Update(id, movie)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	return nil
+	return updatedRow, nil
 }
 
 func (m *movieUsecase) GetByTitle(title string) (movie domain.Movie, err error) {
@@ -52,7 +54,7 @@ func (m *movieUsecase) GetByTitle(title string) (movie domain.Movie, err error) 
 
 func (m *movieUsecase) Store(movie *domain.Movie) (err error) {
 	existed, _ := m.movieRepo.GetByTitle(movie.Title)
-	if existed == (domain.Movie{}) {
+	if reflect.DeepEqual(existed, domain.Movie{}) {
 		return domain.ErrConflict
 	}
 
@@ -61,7 +63,7 @@ func (m *movieUsecase) Store(movie *domain.Movie) (err error) {
 
 func (m *movieUsecase) Delete(id int64) error {
 	existed, _ := m.movieRepo.GetByID(id)
-	if existed == (domain.Movie{}) {
+	if reflect.DeepEqual(existed, domain.Movie{}) {
 		return domain.ErrNotFound
 	}
 
