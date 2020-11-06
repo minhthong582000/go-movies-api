@@ -1,0 +1,27 @@
+version: '3.7'
+
+services:
+    # API container
+    backend:
+        container_name: movies-api
+        context: .
+        restart: on-failure
+        volumes:
+            - movies-api-volume:/app
+        ports:
+            - 8080:3000
+        env_file:
+            - ./.env
+        networks:
+            - movies-api-net
+        extra_hosts:
+            - docker.host:172.17.0.1
+
+# Volume
+volumes:
+    movies-api-volume:
+
+# Network
+networks:
+    movies-api-net:
+        name: movies-api-net

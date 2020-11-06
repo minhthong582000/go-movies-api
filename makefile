@@ -3,7 +3,7 @@ test:
 	go test -v -cover -covermode=atomic ./...
 
 engine:
-	go build -o ${BINARY} app/*.go
+	go build -o ${BINARY} main.go
 
 
 unittest:

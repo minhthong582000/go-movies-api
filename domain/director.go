@@ -12,7 +12,7 @@ type Director struct {
 	Bio       string    `json:"bio"`
 	Image     string    `gorm:"type:varchar(256);UNIQUE" json:"url" binding:"required,url"`
 	Awards    string    `json:"awards"`
-	Movie     []Movie   `gorm:"many2many:movie_directors;" json:"-"`
+	Movie     []*Movie  `gorm:"many2many:movie_directors;" json:"-"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
