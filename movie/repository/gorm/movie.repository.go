@@ -16,7 +16,8 @@ func NewGormMovieRepository(Conn *gorm.DB) domain.MovieRepository {
 
 func (m *gormMovieRepository) Fetch() ([]domain.Movie, error) {
 	movies := make([]domain.Movie, 0)
-	if err := m.Conn.Joins("Author").Find(&movies).Error; err != nil {
+
+	if err := m.Conn.Preload("Actors").Preload("Directors").Find(&movies).Error; err != nil {
 		return nil, err
 	}
 
@@ -25,7 +26,7 @@ func (m *gormMovieRepository) Fetch() ([]domain.Movie, error) {
 
 func (m *gormMovieRepository) GetByID(id int64) (domain.Movie, error) {
 	var movie domain.Movie
-	if err := m.Conn.Joins("Author").Where("movies.id = ?", id).Find(&movie).Error; err != nil {
+	if err := m.Conn.Joins("Actor").Joins("Gendres").Joins("Director").Joins("TrailerLink").Where("movies.id = ?", id).Find(&movie).Error; err != nil {
 		return domain.Movie{}, err
 	}
 

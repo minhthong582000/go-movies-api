@@ -23,7 +23,7 @@ func main() {
 	if err != nil {
 		fmt.Println("Status:", err)
 	}
-	db.AutoMigrate(&domain.Movie{}, &domain.Director{}, &domain.Actor{}, &domain.Gendres{})
+	db.AutoMigrate(&domain.Movie{}, &domain.Director{}, &domain.Actor{}, &domain.Gendres{}, &domain.TrailerLink{})
 
 	movieRepo := gormMovieRepo.NewGormMovieRepository(db)
 	movieUse := movieUsecase.NewMovieUsecase(movieRepo)

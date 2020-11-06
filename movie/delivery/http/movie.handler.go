@@ -71,7 +71,7 @@ func isRequestValid(m *domain.Movie) (bool, error) {
 func (m *MovieHandler) Store(c *gin.Context) {
 	var mov domain.Movie
 
-	err := c.Bind(&mov)
+	err := c.ShouldBindJSON(&mov)
 	if err != nil {
 		c.JSON(http.StatusUnprocessableEntity, err.Error())
 		return
