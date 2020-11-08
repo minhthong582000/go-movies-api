@@ -3,14 +3,16 @@ package main
 import (
 	"fmt"
 
-	"github.com/gin-gonic/gin"
+	_authHttpMiddleware "github.com/minhthong582000/go-movies-api/auth/delivery/http/middleware"
+	_authUsecase "github.com/minhthong582000/go-movies-api/auth/usecase"
 	"github.com/minhthong582000/go-movies-api/config"
 	"github.com/minhthong582000/go-movies-api/domain"
 	"github.com/minhthong582000/go-movies-api/middleware"
-	movieHandler "github.com/minhthong582000/go-movies-api/movie/delivery/http"
-	gormMovieRepo "github.com/minhthong582000/go-movies-api/movie/repository/gorm"
-	movieUsecase "github.com/minhthong582000/go-movies-api/movie/usecase"
+	_movieHandler "github.com/minhthong582000/go-movies-api/movie/delivery/http"
+	_gormMovieRepo "github.com/minhthong582000/go-movies-api/movie/repository/gorm"
+	_movieUsecase "github.com/minhthong582000/go-movies-api/movie/usecase"
 
+	"github.com/gin-gonic/gin"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -25,9 +27,16 @@ func main() {
 	}
 	db.AutoMigrate(&domain.Movie{}, &domain.Director{}, &domain.Actor{}, &domain.Gendres{}, &domain.TrailerLink{})
 
-	movieRepo := gormMovieRepo.NewGormMovieRepository(db)
-	movieUse := movieUsecase.NewMovieUsecase(movieRepo)
-	movieHandler.NewMovieHandler(r, movieUse)
+	// Init auth http middleware
+	authUse := _authUsecase.NewAuthUsecase()
+	authHTTPMdw := _authHttpMiddleware.NewAuthMiddleware(authUse)
+
+	// Init movie handler
+	movieRepo := _gormMovieRepo.NewGormMovieRepository(db)
+	movieUse := _movieUsecase.NewMovieUsecase(movieRepo)
+	r.Use(authHTTPMdw.AuthorizeJWT(), func(c *gin.Context) {
+		_movieHandler.NewMovieHandler(r, movieUse)
+	})
 
 	if err := r.Run(":8080"); err != nil {
 		panic(err)

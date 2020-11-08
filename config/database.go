@@ -15,11 +15,11 @@ type DBConfig struct {
 
 func BuildDBConfig() *DBConfig {
 	dbConfig := DBConfig{
-		Host:     env("DB_HOST"),
-		Port:     env("DB_PORT"),
-		User:     env("DB_USER"),
-		Password: env("DB_PASSWORD"),
-		DBName:   env("DB_NAME"),
+		Host:     Env("DB_HOST"),
+		Port:     Env("DB_PORT"),
+		User:     Env("DB_USER"),
+		Password: Env("DB_PASSWORD"),
+		DBName:   Env("DB_NAME"),
 	}
 
 	return &dbConfig

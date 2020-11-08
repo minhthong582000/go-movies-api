@@ -8,7 +8,7 @@ import (
 
 // use viper package to read .env file
 // return the value of the key
-func env(key string) string {
+func Env(key string) string {
 
 	// SetConfigFile explicitly defines the path, name and extension of the config file.
 	// Viper will use this and not check any of the config paths.
@@ -30,7 +30,8 @@ func env(key string) string {
 	// If the type is a string then ok will be true
 	// ok will make sure the program not break
 	if !ok {
-		log.Fatalf("Invalid type assertion")
+		log.Printf("Environment error: Invalid type assertion for key \"%s\"", key)
+		return ""
 	}
 
 	return value

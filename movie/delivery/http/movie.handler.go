@@ -24,11 +24,14 @@ func NewMovieHandler(r *gin.Engine, us domain.MovieUsecase) {
 		MovUsecase: us,
 	}
 
-	r.GET("/movies", handler.FetchMovie)
-	r.GET("/movies/:id", handler.GetByID)
-	r.POST("/movies", handler.Store)
-	r.PUT("/movies/:id", handler.Update)
-	r.DELETE("/movies", handler.Delete)
+	moviesRouter := r.Group("/movies")
+	{
+		moviesRouter.GET("", handler.FetchMovie)
+		moviesRouter.GET("/:id", handler.GetByID)
+		moviesRouter.POST("", handler.Store)
+		moviesRouter.PUT("/:id", handler.Update)
+		moviesRouter.DELETE("", handler.Delete)
+	}
 }
 
 func (m *MovieHandler) FetchMovie(c *gin.Context) {
