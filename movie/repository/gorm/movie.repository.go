@@ -32,6 +32,7 @@ func (m *gormMovieRepository) GetByID(id int64) (domain.Movie, error) {
 
 	return movie, nil
 }
+
 func (m *gormMovieRepository) GetByTitle(title string) (res domain.Movie, err error) {
 	var movie domain.Movie
 	if err := m.Conn.Find(&movie).Where("title = ?", title).Error; err != nil {

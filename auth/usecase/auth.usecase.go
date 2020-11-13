@@ -7,17 +7,20 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/minhthong582000/go-movies-api/config"
 	"github.com/minhthong582000/go-movies-api/domain"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type authUsecase struct {
 	SecretKey string
 	Issuer    string
+	UserRepo  domain.UserRepository
 }
 
-func NewAuthUsecase() domain.AuthUsecase {
+func NewAuthUsecase(userRepo domain.UserRepository) domain.AuthUsecase {
 	return &authUsecase{
 		SecretKey: getSecretKey(),
 		Issuer:    "minhthong/go-movies-api",
+		UserRepo:  userRepo,
 	}
 }
 
@@ -55,6 +58,45 @@ func (a *authUsecase) ValidateToken(tokenString string) (*jwt.Token, error) {
 	})
 }
 
+func (a *authUsecase) SignIn(credentials domain.Credentials) (token string, err error) {
+	existed, err := a.UserRepo.GetByUsername(credentials.Username)
+	fmt.Printf("%v\n", existed)
+	if existed == (domain.User{}) {
+		return "", err
+	}
+
+	isValid, err := a.UserRepo.ComparePassword(credentials.Password, existed.Password)
+	if isValid == false {
+		return "", err
+	}
+
+	token, err = a.GenerateToken(existed.Username)
+	if err != nil {
+		return "", err
+	}
+
+	return token, nil
+}
+
+func (a *authUsecase) SignUp(user *domain.User) (token string, err error) {
+	user.Password, err = hashPassword(user.Password)
+	if err != nil {
+		return "", err
+	}
+
+	err = a.UserRepo.Store(user)
+	if err != nil {
+		return "", err
+	}
+
+	token, err = a.GenerateToken(user.Username)
+	if err != nil {
+		return "", err
+	}
+
+	return token, nil
+}
+
 func getSecretKey() string {
 	secretKey := config.Env("JWT_SECRET")
 	if secretKey == "" {
@@ -62,4 +104,13 @@ func getSecretKey() string {
 	}
 
 	return secretKey
+}
+
+func hashPassword(password string) (string, error) {
+	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return "", err
+	}
+
+	return string(hash), nil
 }

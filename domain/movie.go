@@ -41,7 +41,7 @@ type MovieUsecase interface {
 type MovieRepository interface {
 	Fetch() (res []Movie, err error)
 	GetByID(id int64) (Movie, error)
-	Update(id int64, movie *Movie) (int64, error)
+	Update(id int64, movie *Movie) (updatedRow int64, err error)
 	GetByTitle(title string) (Movie, error)
 	Store(movie *Movie) error
 	Delete(id int64) error

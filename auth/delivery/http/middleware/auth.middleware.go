@@ -38,6 +38,7 @@ func (au *authMiddleware) AuthorizeJWT() gin.HandlerFunc {
 			log.Println("Claims[Issuer]: ", claims["iss"])
 			log.Println("Claims[IssuedAt]: ", claims["iat"])
 			log.Println("Claims[ExpiresAt]: ", claims["exp"])
+			c.Next()
 		} else {
 			log.Println(err)
 			c.AbortWithStatus(http.StatusUnauthorized)

@@ -19,6 +19,8 @@ type Claims struct {
 type AuthUsecase interface {
 	GenerateToken(username string) (string, error)
 	ValidateToken(tokenString string) (*jwt.Token, error)
+	SignIn(credentials Credentials) (token string, err error)
+	SignUp(user *User) (token string, err error)
 }
 
 type AuthMiddleware interface {
